@@ -70,6 +70,6 @@ def parse_pfc(query):
             sum_protein),
                   'sum_fat':
                       round(sum_fat),
-                            'sum_carbohydrate': round(sum_carbohydrate)}
+                  'sum_carbohydrate': round(sum_carbohydrate)}
         return message, result
     return 'Произошла ошибка при обработке запроса', None
