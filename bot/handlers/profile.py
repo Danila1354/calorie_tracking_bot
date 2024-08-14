@@ -1,17 +1,15 @@
 from aiogram import types
-import json
 
 from aiogram.dispatcher import FSMContext
 from bot.utils.counter_functions import count_norm_of_calories, count_norm_of_pfc
 from bot.keyboards.keyboards import profile_kb, start_test_kb, change_profile_kb
 from bot.states.fsm_classes import FormNewWeight
-from bot.config import data_dir
+from bot.utils.read_and_write_functions import read_json, write_json
 
 
 async def profile(message: types.Message):
     try:
-        with open(f"{data_dir}/user_info_{message.chat.id}.json", 'r', encoding='utf-8') as file:
-            user_info = json.load(file)
+        user_info = read_json(message.chat.id)
         await message.answer(f"Ваш профиль:\n\n"
                              f"Пол: {user_info['gender']}\n"
                              f"Возраст: {user_info['age']}\n"
@@ -37,13 +35,11 @@ async def weight_change_answer(message: types.Message, state: FSMContext):
         return
     async with state.proxy() as data:
         data['new_weight'] = message.text
-    with open(f"{data_dir}/user_info_{message.chat.id}.json", 'r', encoding='utf-8') as file:
-        user_info = json.load(file)
+    user_info = read_json(message.chat.id)
     user_info['weight'] = data['new_weight']
     user_info = count_norm_of_calories(user_info)
     user_info = count_norm_of_pfc(user_info)
-    with open(f"{data_dir}/user_info_{message.chat.id}.json", 'w', encoding='utf-8') as file:
-        json.dump(user_info, file, ensure_ascii=False, indent=4)
+    write_json(message.chat.id,user_info)
     await state.finish()
     await message.answer("Ваш вес успешно изменен", reply_markup=types.ReplyKeyboardMarkup(resize_keyboard=True).row(
         types.KeyboardButton(text="Назад"))

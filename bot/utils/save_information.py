@@ -2,7 +2,7 @@ import json
 import datetime
 from .counter_functions import count_norm_of_calories, count_norm_of_pfc
 from bot.config import data_dir
-
+from bot.utils.read_and_write_functions import write_json
 
 def save(data, message):
     norm_of_water = float(data['weight']) * 0.03
@@ -27,5 +27,4 @@ def save(data, message):
     user_info = count_norm_of_calories(user_info)
     user_info = count_norm_of_pfc(user_info)
 
-    with open(f'{data_dir}/user_info_{message.chat.id}.json', 'w', encoding='utf-8') as file:
-        json.dump(user_info, file, ensure_ascii=False, indent=4)
+    write_json(message.chat.id,user_info)

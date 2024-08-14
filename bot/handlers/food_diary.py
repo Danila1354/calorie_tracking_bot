@@ -5,9 +5,7 @@ from bot.keyboards.keyboards import food_diary_kb, return_kb, food_diary_one_but
 from bot.states.fsm_classes import FormFood
 from bot.utils.parse_pfc import parse_pfc
 from bot.utils.check_adding_food import check
-from bot.config import data_dir
-
-import json
+from bot.utils.read_and_write_functions import read_json,write_json
 
 
 async def food_diary(message: types.Message):
@@ -23,11 +21,9 @@ async def food_entry_answer(message: types.Message, state: FSMContext):
     mes_del = await message.answer("Подождите, идет обработка запроса...")
     mes, result = parse_pfc(message.text)
     mes += 'Добавить в съеденное за сегодня?'
-    with open(f'{data_dir}/user_info_{message.chat.id}.json', 'r', encoding='utf-8') as file:
-        user_info = json.load(file)
+    user_info = read_json(message.chat.id)
     user_info['intermediate_result'] = result
-    with open(f'{data_dir}/user_info_{message.chat.id}.json', 'w', encoding='utf-8') as file:
-        json.dump(user_info, file, ensure_ascii=False, indent=4)
+    write_json(message.chat.id,user_info)
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True).row(types.KeyboardButton(text="Да")).row(
         types.KeyboardButton('Нет'))
     await mes_del.delete()

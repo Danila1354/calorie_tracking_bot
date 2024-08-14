@@ -5,6 +5,12 @@ from aiogram import types
 from bot.utils import save_information
 
 
+async def start_over(message: types.Message, state: FSMContext):
+    await message.answer("Какой у вас пол?", reply_markup=gender_kb)
+    await state.finish()
+    await Form.gender.set()
+
+
 async def form(message: types.Message):
     await message.answer("Какой у вас пол?", reply_markup=gender_kb)
     await Form.gender.set()
@@ -22,9 +28,7 @@ async def gender_answer(message: types.Message, state: FSMContext):
 
 async def age_answer(message: types.Message, state: FSMContext):
     if message.text == 'Заполнить анкету заново':
-        await message.answer("Какой у вас пол?", reply_markup=gender_kb)
-        await state.finish()
-        await Form.gender.set()
+        await start_over(message, state)
         return
     if not message.text.isdigit():
         await message.answer("Пожалуйста, введите число")
@@ -37,9 +41,7 @@ async def age_answer(message: types.Message, state: FSMContext):
 
 async def weight_answer(message: types.Message, state: FSMContext):
     if message.text == 'Заполнить анкету заново':
-        await message.answer("Какой у вас пол?", reply_markup=gender_kb)
-        await state.finish()
-        await Form.gender.set()
+        await start_over(message, state)
         return
     # check that message.text is int or float
     if not message.text.replace('.', '', 1).replace(',', '', 1).isdigit():
@@ -54,9 +56,7 @@ async def weight_answer(message: types.Message, state: FSMContext):
 
 async def goal_answer(message: types.Message, state: FSMContext):
     if message.text == 'Заполнить анкету заново':
-        await message.answer("Какой у вас пол?", reply_markup=gender_kb)
-        await state.finish()
-        await Form.gender.set()
+        await start_over(message, state)
         return
     if message.text not in ["Набор массы", "Оставаться в форме", "Снижение массы"]:
         await message.answer("Пожалуйста, выберите один из предложенных вариантов")
@@ -69,9 +69,7 @@ async def goal_answer(message: types.Message, state: FSMContext):
 
 async def activity_answer(message: types.Message, state: FSMContext):
     if message.text == 'Заполнить анкету заново':
-        await message.answer("Какой у вас пол?", reply_markup=gender_kb)
-        await state.finish()
-        await Form.gender.set()
+        await start_over(message, state)
         return
     if message.text not in ["Сидячий образ жизни, никаких упражнений", "Легкая активность "
                                                                        "(небольшие упражнения 1-3 раза в неделю)",

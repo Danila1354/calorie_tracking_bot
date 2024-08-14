@@ -3,11 +3,11 @@ import json
 from bot.keyboards.keyboards import water_remind_kb_on, water_remind_kb_off, food_diary_one_button_kb
 from bot.utils.check_adding_water import check
 from bot.config import data_dir
+from bot.utils.read_and_write_functions import read_json,write_json
 
 
 async def reminder(message: types.Message):
-    with open(f"{data_dir}/user_info_{message.chat.id}.json", 'r', encoding='utf-8') as file:
-        user_info = json.load(file)
+    user_info = read_json(message.chat.id)
     if user_info['water_reminder'] == "off":
         await message.answer("Напоминания о воде выключены", reply_markup=water_remind_kb_on)
     else:
@@ -15,20 +15,17 @@ async def reminder(message: types.Message):
 
 
 async def reminder_on(message: types.Message):
-    with open(f"{data_dir}/user_info_{message.chat.id}.json", 'r', encoding='utf-8') as file:
-        user_info = json.load(file)
+    user_info = read_json(message.chat.id)
     user_info['water_reminder'] = "on"
-    with open(f"{data_dir}/user_info_{message.chat.id}.json", 'w', encoding='utf-8') as file:
-        json.dump(user_info, file, ensure_ascii=False, indent=4)
+    write_json(message.chat.id,user_info)
     await message.answer("Напоминания о воде включены", reply_markup=water_remind_kb_off)
 
 
 async def reminder_off(message: types.Message):
-    with open(f"{data_dir}/user_info_{message.chat.id}.json", 'r', encoding='utf-8') as file:
-        user_info = json.load(file)
+
+    user_info = read_json(message.chat.id)
     user_info['water_reminder'] = "off"
-    with open(f"{data_dir}/user_info_{message.chat.id}.json", 'w', encoding='utf-8') as file:
-        json.dump(user_info, file, ensure_ascii=False, indent=4)
+    write_json(message.chat.id,user_info)
     await message.answer("Напоминания о воде выключены", reply_markup=water_remind_kb_on)
 
 
